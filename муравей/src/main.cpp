@@ -4,6 +4,75 @@
 #include <ctime>
 #include <iostream>
 
+
+#include <iostream>
+
+#include <vector>
+#include <unordered_map>
+
+using namespace std;
+
+struct Position 
+{
+    int x;
+    int y;
+    bool operator==(const Position& other) const {
+        return x == other.x && y == other.y;
+    }
+};
+
+struct PositionHash {
+    std::size_t operator()(const Position& pos) const 
+    {
+        return std::hash<int>()(pos.x) ^ (std::hash<int>()(pos.y) << 1);
+    }
+};
+
+struct CellInfo {
+    bool hasFood;       
+    int foodAmount;     
+    bool hasPalka;
+
+};
+
+class Ant {
+public:
+    Position getPosition() const { return currentPosition; }
+    // мяу мяу
+
+private:
+    Position currentPosition;
+    // мяу мяу
+};
+
+std::vector<Ant> ants;  
+std::unordered_map<Position, CellInfo, PositionHash> positionMap;  
+
+void processAnts() 
+{
+    for (Ant& ant : ants) 
+    {
+        Position antPos = ant.getPosition();
+        auto it = positionMap.find(antPos);
+
+        if (it != positionMap.end())
+        {
+            if (it->second.hasFood) 
+            {
+                // тут мы берем покушать себе
+                std::cout << "Food found in the position ("
+                    << antPos.x << ", " << antPos.y << ")\n";
+            }
+            if (it->second.hasPalka) 
+            {
+                // тут мы берем палку и тащим домой
+                std::cout << "A stick found in the position ("
+                    << antPos.x << ", " << antPos.y << ")\n";
+            }
+        }
+    }
+}
+
 int main() {
     sf::RenderWindow window(sf::VideoMode({800, 600}), "Ant Simulation");
     window.setFramerateLimit(60);
