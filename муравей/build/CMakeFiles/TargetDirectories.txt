@@ -1,0 +1,3 @@
+/Users/aleksejveckanov/Desktop/учеба/с++/муравей/build/CMakeFiles/AntSimulation.dir
+/Users/aleksejveckanov/Desktop/учеба/с++/муравей/build/CMakeFiles/edit_cache.dir
+/Users/aleksejveckanov/Desktop/учеба/с++/муравей/build/CMakeFiles/rebuild_cache.dir
