@@ -11,12 +11,6 @@ public:
     virtual void work() = 0;
 };
 
-class Nanny : public Role {
-public:
-    std::string name() const override { return "Nanny"; }
-    void work() override {}
-};
-
 class Soldier : public Role {
 public:
     std::string name() const override { return "Soldier"; }
@@ -35,10 +29,5 @@ public:
     void work() override;
 };
 
-class Cleaner : public Role {
-public:
-    std::string name() const override { return "Cleaner"; }
-    void work() override;
-};
 
 #endif
