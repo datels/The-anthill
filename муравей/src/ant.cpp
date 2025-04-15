@@ -1,18 +1,23 @@
-//#include <stdexcept>
+// #include <stdexcept>
 #include "ant.hpp"
-#include <cmath>
+
 #include <iostream>
+#include <SFML/Graphics.hpp>
+#include "map.hpp"
+
 sf::Texture Ant::texture;
-Ant::Ant(float x, float y) 
-    : velocity(0, 0), 
-      age(0), 
-      health(100), 
-      subscribed(false),
-      sprite(texture) 
+Ant::Ant(float x, float y)
+    : velocity(0, 0),
+      age(0),
+      health(100),
+      busy(false),
+      sprite(texture)
 {
-    if (texture.getSize() == sf::Vector2u(0, 0)) {
-        
-        if (!texture.loadFromFile("assets/me.png")) {
+    if (texture.getSize() == sf::Vector2u(0, 0))
+    {
+
+        if (!texture.loadFromFile("assets/ant.png"))
+        {
             std::cerr << "Texture load failed\n";
             return;
         }
@@ -20,37 +25,50 @@ Ant::Ant(float x, float y)
     sprite.setTexture(texture);
     sf::Vector2f position(x, y);
     sprite.setPosition(position);
-    sprite.setOrigin({
-        texture.getSize().x / 2.f,
-        texture.getSize().y / 2.f
-    });
+    sprite.setOrigin({texture.getSize().x / 2.f,
+                      texture.getSize().y / 2.f});
 }
-    
-    
-    
 
+sf::Vector2f normalize(sf::Vector2f v)
+{
+    float len = std::hypot(v.x, v.y);
+    return len > 0 ? v / len : sf::Vector2f(0, 0);
+}
 
 void Ant::update()
 {
-    if (this->sprite.getPosition().x < 0 || this->sprite.getPosition().x > 800 || this->sprite.getPosition().y < 0 || this->sprite.getPosition().y > 600) {
-        if (this->sprite.getPosition().x < 0) {
-            this->sprite.setPosition(sf::Vector2f(800,this->sprite.getPosition().y) );
+    if (this->sprite.getPosition().x < 0 || this->sprite.getPosition().x > 800 || this->sprite.getPosition().y < 0 || this->sprite.getPosition().y > 600)
+    {
+        if (this->sprite.getPosition().x < 0)
+        {
+            this->sprite.setPosition(sf::Vector2f(800, this->sprite.getPosition().y));
         }
-        if (this->sprite.getPosition().x > 800) {
-            this->sprite.setPosition(sf::Vector2f(0,this->sprite.getPosition().y) );
+        if (this->sprite.getPosition().x > 800)
+        {
+            this->sprite.setPosition(sf::Vector2f(0, this->sprite.getPosition().y));
         }
-        if (this->sprite.getPosition().y < 0) {
-            this->sprite.setPosition(sf::Vector2f(this->sprite.getPosition().x,600) );
+        if (this->sprite.getPosition().y < 0)
+        {
+            this->sprite.setPosition(sf::Vector2f(this->sprite.getPosition().x, 600));
         }
-        if (this->sprite.getPosition().y > 600) {
-            this->sprite.setPosition(sf::Vector2f(this->sprite.getPosition().x,0) );
+        if (this->sprite.getPosition().y > 600)
+        {
+            this->sprite.setPosition(sf::Vector2f(this->sprite.getPosition().x, 0));
         }
-
     }
     sprite.move(velocity);
-    if (std::rand() % 100 < 10) {
-        velocity = sf::Vector2f((std::rand() % 3 - 1) * 1.0f, (std::rand() % 3 - 1) * 1.0f);
+    if (std::rand() % 1000 < 10)
+    {
+        velocity = normalize({(std::rand() % 3 - 1) * 1.0f, (std::rand() % 3 - 1) * 1.0f});
     }
+    positionMap[Position{sprite.getPosition().x, sprite.getPosition().y}].hasAnt = true;
+    positionMap[Position{sprite.getPosition().x, sprite.getPosition().y}].ptr = this;
+    
+    // если наткнулся на еду
+    // поел()
+    // если палка
+    // отнес палку
+    // пошел в муравейник
 }
 
 void Ant::draw(sf::RenderWindow &window) const
@@ -108,13 +126,41 @@ void Ant::onAlert()
     }
 }
 
+void Ant::goTo(const sf::Vector2f &position)
+{
+    float x, x1, x2, y1, y2;
+    x2 = position.x;      //=400
+    y2 = position.y;      //=400
+    x1 = getPosition().x; // 100
+    y1 = getPosition().y; // 100
+    float y = getPosition().y;
+    if (y == position.y)
+        return;
+    if (y > position.y)
+    {
+        sprite.move(velocity);
+        y--;
+        x = ((y - y1) / (y2 - y1)) * (x2 - x1) + x1;
+        velocity = sf::Vector2f((x - x1) * 1.0f, (y - y1) * 1.0f);
+    }
+    else
+    {
+        sprite.move(velocity);
+        y++;
+        x = ((y - y1) / (y2 - y1)) * (x2 - x1) + x1;
+        velocity = sf::Vector2f((x - x1) * 1.0f, (y - y1) * 1.0f);
+    }
+    positionMap[Position{sprite.getPosition().x, sprite.getPosition().y}].hasAnt = true;
+    positionMap[Position{sprite.getPosition().x, sprite.getPosition().y}].ptr = this;
+}
+
 void Ant::subscribeToNotifier(Notifier &notifier)
 {
-    if (!subscribed)
+    if (!busy)
     {
         std::shared_ptr<Ant> self = shared_from_this();
         notifier.subscribe([self]()
                            { self->onAlert(); });
-        subscribed = true;
+        busy = true;
     }
 }

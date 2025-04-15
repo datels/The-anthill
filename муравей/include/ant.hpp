@@ -18,21 +18,19 @@ public:
     sf::Vector2f getPosition() const;
     bool isNear(const sf::Vector2f& other, float distance) const;
     void onAlert();
+    void goTo(const sf::Vector2f& position);
     void subscribeToNotifier(Notifier& notifier);
 
 private:
     
-    
     sf::Vector2f velocity;
-
     static sf::Texture texture;
     sf::Sprite sprite;
-
     int age;
     float health;
     std::shared_ptr<Role> role;
     void updateRole();
-    bool subscribed;
+    bool busy;
 };
 
 #endif

@@ -6,7 +6,11 @@ Anthill::Anthill(){
     shape.setPosition(sf::Vector2f(400.f, 300.f));
 }
 void Anthill::update() {
-    for (auto& ant : ants) ant->update();
+    for (auto& ant : ants){ 
+        ant->update();
+        
+    }
+    
 }
 
 void Anthill::draw(sf::RenderWindow& window) {

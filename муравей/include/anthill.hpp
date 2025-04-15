@@ -29,12 +29,13 @@ public:
     // void dropSize();
     // void dropFood();
     // void dropSticks();
-
-
-private:
     std::vector<std::shared_ptr<Ant>> ants;
     std::vector<std::shared_ptr<Food>> foods;
     std::vector<std::shared_ptr<Stick>> sticks;
+
+private:
+    
+    
     Notifier soldierNotifier;
     sf::CircleShape shape;
     static int food, foodCapacity, antsCapacity, size, countSticks, sticksCapacity;

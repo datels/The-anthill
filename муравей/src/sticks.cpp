@@ -1,11 +1,24 @@
 #include "sticks.hpp"
-Stick::Stick(float x, float y) {
-    shape.setSize(sf::Vector2f(15.f, 5.f));
-    shape.setFillColor(sf::Color(99,99,99));
-     // Коричневый цвет
+#include <iostream>
+sf::Texture Stick::texture;
+Stick::Stick(float x, float y):sprite(texture) {
     sf::Vector2f position(x, y);
-    shape.setPosition(position);
+    sprite.setPosition(position);
+    if (texture.getSize() == sf::Vector2u(0, 0))
+    {
+
+        if (!texture.loadFromFile("assets/stick.png"))
+        {
+            std::cerr << "Texture load failed\n";
+            return;
+        }
+    }
+    sprite.setTexture(texture);
+    
+    
+     // Коричневый цвет
+    sprite.setPosition(position);
 }
 void Stick::draw(sf::RenderWindow& window) const {
-    window.draw(shape);
+    window.draw(sprite);
 }

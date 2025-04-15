@@ -22,6 +22,7 @@ add_executable(AntSimulation
     src/notifier.cpp
     src/food.cpp
     src/sticks.cpp
+    src/map.cpp
 )
 
 

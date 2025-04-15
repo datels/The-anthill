@@ -1,17 +1,26 @@
 #include "food.hpp"
-
-Food::Food(float x, float y)
+#include <iostream>
+sf::Texture Food::texture;
+Food::Food(float x, float y):sprite(texture)
 {
-    shape.setRadius(5.f);
-    shape.setFillColor(sf::Color::Yellow);
     sf::Vector2f position(x, y);
-    shape.setPosition(position);
+    sprite.setPosition(position);
+    if (texture.getSize() == sf::Vector2u(0, 0))
+    {
+
+        if (!texture.loadFromFile("assets/IMG_6467.png"))
+        {
+            std::cerr << "Texture load failed\n";
+            return;
+        }
+    }
+    sprite.setTexture(texture);
     
 }
 void Food:: draw(sf::RenderWindow& window) const {
-    window.draw(shape);
+    window.draw(sprite);
 }
 
 sf::Vector2f Food:: getPosition() const {
-    return shape.getPosition();
+    return sprite.getPosition();
 }
