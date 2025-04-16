@@ -27,4 +27,5 @@ struct PositionHash {
     }
 };
 extern std::unordered_map<Position, CellInfo, PositionHash> positionMap;
+
 #endif

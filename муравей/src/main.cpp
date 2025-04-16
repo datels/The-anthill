@@ -5,6 +5,7 @@
 #include <iostream>
 #include "map.hpp"
 
+
 int main()
 {
     sf::RenderWindow window(sf::VideoMode({800, 600}), "Ant Simulation");
@@ -21,7 +22,7 @@ int main()
     Anthill anthill;
     positionMap[Position{400, 300}].hasAnthill = true;
     positionMap[Position{400, 300}].ptr = &anthill;
-    for (int i = 0; i < 10; ++i)
+    for (int i = 0; i < 20; ++i)
     {
         float x = std::rand() % 800;
         float y = std::rand() % 600;
@@ -44,7 +45,7 @@ int main()
                 window.close();
             }
         }
-        if (food_and_sticks_Clock.getElapsedTime().asSeconds() >= 5.f)
+        if (food_and_sticks_Clock.getElapsedTime().asSeconds() >= 2.f)
         {
             // Добавь еду здесь (например, создать объект еды и добавить его в массив)
             for (int i = 0; i < 5; ++i)
@@ -59,6 +60,8 @@ int main()
                 anthill.generateFood(std::make_shared<Food>(x, y));
                 positionMap[Position{x, y}].hasFood = true;
                 positionMap[Position{x, y}].ptr = anthill.foods[i].get();
+                // Food* food  =  anthill.foods[i].get();
+                // food->registerCircularBoundary(food->getPosition(), 10, food);
             }
             for (int i = 0; i < 5; ++i)
             {
@@ -76,7 +79,7 @@ int main()
             std::cout << "Добавлена еда на поле!\n";
             food_and_sticks_Clock.restart();
         }
-
+// Здесь была Анастасия Шипова из КНТ-2
         anthill.update();
         anthill.alertSoldiers(enemy);
         window.clear(sf::Color(0x22, 0x8B, 0x22));

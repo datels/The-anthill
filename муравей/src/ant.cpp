@@ -1,6 +1,6 @@
 // #include <stdexcept>
 #include "ant.hpp"
-
+#include "food.hpp"
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "map.hpp"
@@ -56,6 +56,12 @@ void Ant::update()
             this->sprite.setPosition(sf::Vector2f(this->sprite.getPosition().x, 0));
         }
     }
+    float next_x = sprite.getPosition().x + velocity.x;
+    float next_y = sprite.getPosition().y + velocity.y;
+    if (positionMap[Position{sprite.getPosition().x, sprite.getPosition().y}].hasFood){
+        Food* food = static_cast<Food*>(positionMap[Position{next_x, next_y}].ptr);       
+        food->eat();
+    }
     sprite.move(velocity);
     if (std::rand() % 1000 < 10)
     {
@@ -63,18 +69,29 @@ void Ant::update()
     }
     positionMap[Position{sprite.getPosition().x, sprite.getPosition().y}].hasAnt = true;
     positionMap[Position{sprite.getPosition().x, sprite.getPosition().y}].ptr = this;
-    
+    this->registerCircularBoundary(sprite.getPosition(), 50, this);
     // если наткнулся на еду
     // поел()
     // если палка
     // отнес палку
     // пошел в муравейник
 }
-
 void Ant::draw(sf::RenderWindow &window) const
 {
     window.draw(sprite);
 }
+void Ant:: registerCircularBoundary(sf::Vector2f center, int radius, Ant* obj) {
+    for (float angle = 0; angle < 2 * M_PI; angle += 0.1f) {
+        float x = static_cast<int>(center.x + radius * std::cos(angle));
+        float y = static_cast<int>(center.y + radius * std::sin(angle));
+        //если в эту окружность попала еда 
+        if (positionMap[Position{x,y}].hasFood){/*тогда еда должна быть съедена + соответствующие бафы хп все дела,
+            эту еду удалить с карты и записать в эту ячейку в мапе указатель муравья*/}
+        positionMap[Position{x,y}].ptr = obj;
+        positionMap[Position{x,y}].hasAnt = true;
+    }
+}
+
 
 ///
 void Ant::growOlder()
@@ -138,10 +155,11 @@ void Ant::goTo(const sf::Vector2f &position)
         return;
     if (y > position.y)
     {
-        sprite.move(velocity);
+        sprite.move(velocity);//яяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяя
+
         y--;
         x = ((y - y1) / (y2 - y1)) * (x2 - x1) + x1;
-        velocity = sf::Vector2f((x - x1) * 1.0f, (y - y1) * 1.0f);
+        velocity = sf::Vector2f((x - x1) * 1.0f, (y - y1)   * 1.0f);
     }
     else
     {
@@ -155,7 +173,7 @@ void Ant::goTo(const sf::Vector2f &position)
 }
 
 void Ant::subscribeToNotifier(Notifier &notifier)
-{
+{       
     if (!busy)
     {
         std::shared_ptr<Ant> self = shared_from_this();

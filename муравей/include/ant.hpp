@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 #include <string>
+#include "map.hpp"
 #include "roles.hpp"
 #include "notifier.hpp"
 
@@ -19,6 +20,8 @@ public:
     bool isNear(const sf::Vector2f& other, float distance) const;
     void onAlert();
     void goTo(const sf::Vector2f& position);
+    void registerCircularBoundary(sf::Vector2f center, int radius, Ant* obj); 
+        
     void subscribeToNotifier(Notifier& notifier);
 
 private:
